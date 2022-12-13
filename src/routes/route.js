@@ -6,7 +6,7 @@ const UrlModel = require('../models/UrlModel');
 router.post('/url/shorten', async (req, res, next) => {
   // IF THE BODY IS EMPTY
   if (!Object.keys(req.body).length) {
-    return next(new AppError(`Body is empty! Please send a valid Url!`, 404));
+    return next(new AppError(`Body is empty!`, 400));
   }
   try {
     // USING AXIOS CHECKING URL IS VALID OR NOT
@@ -32,7 +32,7 @@ router.post('/url/shorten', async (req, res, next) => {
     });
   } catch (error) {
     // SENDING ERROR TO CLINT IF ANY
-    return next(new AppError(`${error.message}`, 404));
+    return next(new AppError(`${error.message}`, 404));// error code 500
   }
 });
 
