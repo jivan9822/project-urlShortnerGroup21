@@ -10,11 +10,12 @@ router.post('/url/shorten', async (req, res, next) => {
   }
   try {
     // USING AXIOS CHECKING URL IS VALID OR NOT
-    await axios.get(req.body.longUrl, {
+    let str = req.body.longUrl.toString();
+    await axios.get(str, {
       headers: { 'Accept-Encoding': 'gzip,deflate,compress' },
     });
     // IF THE URL IS ALREADY IN DATABASE THEN SEND THE OLD SHORTEN CODE TO CLINT
-    const oldData = await UrlModel.findOne(req.body).select('-__v');
+    const oldData = await UrlModel.findOne(req.body).select({ _id: 0, __v: 0 });
     if (oldData) {
       return res.status(200).json({
         status: true,
@@ -22,7 +23,8 @@ router.post('/url/shorten', async (req, res, next) => {
       });
     }
     // SETTING IN BODY URLCODE AND SHORTEN URL
-    req.body.urlCode = (Math.random() + 1).toString(36).substring(7);
+    req.body.urlCode =
+      (Math.random() + 1).toString(36).substring(7) + str.slice(-1);
     req.body.shortUrl = `http://localhost:3000/${req.body.urlCode}`;
     // CREATE NEW DATA AND SAVE TO DATABASE
     const data = await UrlModel.create(req.body);
@@ -32,14 +34,29 @@ router.post('/url/shorten', async (req, res, next) => {
     });
   } catch (error) {
     // SENDING ERROR TO CLINT IF ANY
-    return next(new AppError(`${error.message}`, 404));// error code 500
+    const err = error.message.split(' ');
+    return next(
+      new AppError(
+        `Url not responding! Please Check and send a valid Url! URL:${err[2]}`,
+        400
+      )
+    );
   }
 });
 
 // THIS GET METHOD TO REDIRECT THE TO MAIN URL
 router.get('/:urlCode', async (req, res, next) => {
-  const url = await UrlModel.findOne({ urlCode: req.params.urlCode });
-  res.redirect(302, url.longUrl);
+  try {
+    const url = await UrlModel.findOne({ urlCode: req.params.urlCode });
+    if (url) {
+      return res.redirect(302, url.longUrl);
+    }
+    return next(
+      new AppError(`Invalid short Url code: ${req.params.urlCode}`, 400)
+    );
+  } catch (error) {
+    next(error);
+  }
 });
 
 module.exports = router;

@@ -18,6 +18,7 @@ const urlSchema = new mongoose.Schema({
   // longUrl: {mandatory, valid url}
   longUrl: {
     type: String,
+    trim: true,
     required: [true, 'Please provide a valid Url!'],
     lowercase: true,
   },
