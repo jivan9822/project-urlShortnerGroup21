@@ -14,7 +14,7 @@ exports.getUrl = async (req, res, next) => {
   // CHECKING IN CATCH
   const dataCatch = await getFromCache(urlCode);
   if (dataCatch) {
-    return res.redirect(302, dataCatch.longUrl);
+    return res.redirect(302, dataCatch);
   }
 
   // CHECK IN DATA-BASE

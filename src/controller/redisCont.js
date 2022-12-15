@@ -28,6 +28,6 @@ exports.getFromCache = async (key) => {
 
 // INSERTING TO CATCH
 exports.addToCache = async (data) => {
-  await client.setEx(data.shortUrl, EX_TIME, data.longUrl);
+  await client.setEx(data.urlCode, EX_TIME, data.longUrl);
   await client.setEx(data.longUrl, EX_TIME, JSON.stringify(data));
 };
