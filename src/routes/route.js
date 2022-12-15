@@ -18,7 +18,7 @@ router.post('/url/shorten', async (req, res, next) => {
       const data = JSON.parse(longUrl);
       return res.status(200).json({
         status: true,
-        result: 'catch',
+        from: 'catch',
         data,
       });
     }
@@ -41,7 +41,7 @@ router.post('/url/shorten', async (req, res, next) => {
     // FINAL RETURN TO CLINT NEW SHORT URL AND OTHER DETAILS
     res.status(201).json({
       status: true,
-      result: 'db',
+      from: 'db',
       data,
     });
   } catch (error) {
@@ -67,6 +67,9 @@ router.get('/:urlCode', async (req, res, next) => {
     } else {
       // IF NOT PRESENT IN CATCH ONE MORE CHECK IN DATA-BASE
       const data = await UrlModel.findOne(req.params);
+
+      // IF FOUND IN DATA-BASE THEN WE WILL ADD IT TO CATCH
+      addToCache(data);
       if (data) {
         return res.redirect(302, data.longUrl);
       } else {
