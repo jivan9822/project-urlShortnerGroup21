@@ -4,11 +4,20 @@ const redis = require('redis');
 const EX_TIME = Date.now();
 
 // CONNECTION REDIS
+// const client = redis.createClient({
+//   socket: {
+//     host: '127.0.0.1',
+//     port: 6379,
+//   },
+// });
+// CONNECTION REDIS
 const client = redis.createClient({
   socket: {
-    host: '127.0.0.1',
-    port: 6379,
+    // host: '127.0.0.1',
+    host: 'redis-14891.c82.us-east-1-2.ec2.cloud.redislabs.com',
+    port: 14891,
   },
+  password: 'z8Z7dkK8OWdx3652QwYwCxO4gVHMqPqt',
 });
 
 client
